@@ -9,4 +9,4 @@ output/
 data/
 .env
 loRA_images/
-working_training_cell.txt
+training_cell.txt

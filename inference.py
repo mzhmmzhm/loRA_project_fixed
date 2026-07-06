@@ -27,7 +27,7 @@ def run_inference(
     # 1. Load the base Stable Diffusion pipeline (UNet, VAE, Text Encoder).
     pipeline = StableDiffusionPipeline.from_pretrained(
         model_id,
-        torch_dtype=torch.float16
+        torch_dtype=torch.float32
     ).to("cuda")
 
     # 2. Load the fine-tuned LoRA weights into the pipeline.

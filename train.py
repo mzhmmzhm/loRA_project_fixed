@@ -43,7 +43,7 @@ def train_lora_diffusion(model_id: str, preprocessed_dataset, lora_config: LoraC
         preprocessed_dataset,
         batch_size=training_args.per_device_train_batch_size,
         shuffle=True,
-        num_workers=training_args.dataloader_num_workers if hasattr(training_args, 'dataloader_workers') else 0,
+        num_workers=training_args.dataloader_num_workers if hasattr(training_args, 'dataloader_num_workers') else 0,
     )
 
     # Define the learning rate scheduler.
@@ -54,17 +54,19 @@ def train_lora_diffusion(model_id: str, preprocessed_dataset, lora_config: LoraC
         num_training_steps=training_args.num_train_epochs * len(train_dataloader),
     )
 
-    # Prepare models, optimizer, dataloader, and scheduler with Accelerator.
-    lora_model, vae, text_encoder, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
-        lora_model, vae, text_encoder, optimizer, train_dataloader, lr_scheduler
+    # Prepare only trainable components with Accelerator.
+    # Do NOT wrap frozen models (VAE, text_encoder) — Accelerator wrapping can destabilize them.
+    lora_model, optimizer, train_dataloader, lr_scheduler = accelerator.prepare(
+        lora_model, optimizer, train_dataloader, lr_scheduler
     )
 
-    # Get the model's dtype (should be float32 after fixing UNet loading)
+    # Manually move frozen models to device.
+    vae = vae.to(accelerator.device)
+    text_encoder = text_encoder.to(accelerator.device)
+
+    # Get the model's dtype
     model_dtype = next(lora_model.parameters()).dtype
-    # Keep VAE in its native precision (float32) for numerical stability
     vae.to(dtype=torch.float32)
-    # Get the text encoder's dtype.
-    text_encoder_dtype = next(text_encoder.parameters()).dtype
 
     # 5. Define the noise scheduler
     noise_scheduler = DDPMScheduler.from_pretrained(model_id, subfolder="scheduler")
