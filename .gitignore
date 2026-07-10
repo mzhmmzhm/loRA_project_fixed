@@ -8,5 +8,12 @@ __pycache__/
 output/
 data/
 .env
-loRA_images/
 training_cell.txt
+chxpln_data/
+loss_values_latest.txt
+make_video.py
+prompts_to_try.txt
+svg_data_folder_converted/
+video_instructions.txt
+svg_data_folder_svgs/
+result.png

@@ -2,6 +2,7 @@
 
 import torch
 from diffusers import StableDiffusionPipeline
+from peft import PeftModel
 from PIL import Image
 
 def run_inference(
@@ -30,9 +31,9 @@ def run_inference(
         torch_dtype=torch.float32
     ).to("cuda")
 
-    # 2. Load the fine-tuned LoRA weights into the pipeline.
+    # 2. Load the fine-tuned LoRA weights into the pipeline using PEFT.
     print(f"Loading LoRA weights from {lora_path}...")
-    pipeline.load_lora_weights(lora_path)
+    pipeline.unet = PeftModel.from_pretrained(pipeline.unet, lora_path)
 
     # 3. Generate the image.
     print(f"Generating image for prompt:\n  \"{prompt}\"")
