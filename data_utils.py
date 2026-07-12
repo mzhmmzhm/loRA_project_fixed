@@ -5,6 +5,7 @@ import os
 from PIL import Image as PILImage
 
 preprocess = transforms.Compose([
+    transforms.RandomHorizontalFlip(p=0.5),
     transforms.Resize((512, 512)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),

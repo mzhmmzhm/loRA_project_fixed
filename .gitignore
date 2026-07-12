@@ -17,3 +17,7 @@ svg_data_folder_converted/
 video_instructions.txt
 svg_data_folder_svgs/
 result.png
+generate_diverse_data.py
+generate_diverse_data_v2.py
+loss_values.txt
+updated_data/
